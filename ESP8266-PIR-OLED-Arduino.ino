@@ -1,30 +1,38 @@
-//DHT, Motion and OLED sketch
+//DHT, Motion and OLED sketch for "The Kube" sensor
+
+//by bkpsu, https://www.thingiverse.com/thing:2539897
 
 #define MQTT_SOCKET_TIMEOUT 120
 
 /************ HARDWARE CONFIG (CHANGE THESE FOR YOUR SENSOR SETUP) ******************/
+#define LOCAL //Uncomment to disable remote sensor functionality (Wifi & MQTT)
 //#define OLED_SPI //Uncomment if using SPI OLED screen (assuming I2C otherwise)
-//#define DEEPSLEEP //Uncomment if you want sensor to sleep after every update (Does NOT work with MOTION_ON or LED_ON which require constant uptime) - Note: Screen will turn off/on during reboot cycle
+#define DEEPSLEEP //Uncomment if you want sensor to sleep after every update (Does NOT work with MOTION_ON or LED_ON which require constant uptime) - Note: Screen will turn off/on during reboot cycle
 #define FLIP_SCREEN //Uncomment if mounting to wall with USB connector on top
-#define MOTION_ON //Uncomment if using motion sensor
+//#define MOTION_ON //Uncomment if using motion sensor
 //#define OLED_MOTION //Uncomment if you want screen to turn on only if motion is detected
 //#define LED_ON //Uncomment if using as LED controller
 
 /************ WIFI and MQTT INFORMATION (CHANGE THESE FOR YOUR SETUP) ******************/
 #define wifi_ssid "ssid" //enter your WIFI SSID
-#define wifi_password "password" //enter your WIFI Password
-#define mqtt_server "mqtt_server" // Enter your MQTT server address or IP.
-#define mqtt_device "mqtt_device" //MQTT device
+#define wifi_password "pass" //enter your WIFI Password
+#define mqtt_server "mqttserver" // Enter your MQTT server address or IP.
+#define mqtt_device "mqttdevice" //MQTT device
 #define mqtt_user "" //enter your MQTT username
 #define mqtt_password "" //enter your password
 
 /****************************** MQTT TOPICS (change these topics as you wish)  ***************************************/
-#define temperaturepub "home/mqtt_device/temperature"
-#define humiditypub "home/mqtt_device/humidity"
-#define tempindexpub "home/mqtt_device/temperatureindex"
-#define motionpub "home/mqtt_device/motion"
+#define temperaturepub "home/mqttdevice/temperature"
+#define humiditypub "home/mqttdevice/humidity"
+#define tempindexpub "home/mqttdevice/temperatureindex"
+#define motionpub "home/mqttdevice/motion"
 
-/*****************************************************/
+/****************************** DHT 22 Calibration settings *************/
+
+float temp_offset = -14.4;
+float hum_offset = 21.6;
+
+/**************************************************/
 
 #define DHTPIN 4      // (D2) what digital pin we're connected to
 #define MOTIONPIN 5   // (D1) what digital pin the motion sensor is connected to
@@ -76,11 +84,14 @@ void setup() {
   #endif
   display.setFont(ArialMT_Plain_10);
   display.setTextAlignment(TEXT_ALIGN_LEFT);
-    
-  setup_wifi();
-
-  client.setServer(mqtt_server, 1883); //CHANGE PORT HERE IF NEEDED
-
+  
+  #ifndef LOCAL    
+    setup_wifi();
+  
+    client.setServer(mqtt_server, 1883); //CHANGE PORT HERE IF NEEDED
+  #else
+    WiFi.mode(WIFI_OFF);
+  #endif
 }
 
 void setup_wifi() {
@@ -132,11 +143,11 @@ void loop() {
 
   char strCh[10];
   String str;
-  
- if (!client.loop()) {
-  reconnect();
- }
- 
+  #ifndef LOCAL  
+    if (!client.loop()) {
+      reconnect();
+    }
+  #endif
  
   if(currentMillis - previousMillis > interval) {
       previousMillis = currentMillis;
@@ -152,24 +163,29 @@ void loop() {
         Serial.println("Failed to read from DHT sensor!");
         h=t=f=-1;
       }
+      else { //add offsets, if any
+        t = t + ((5 / 9) * temp_offset);
+        f = f + temp_offset;
+        h = h + hum_offset;
+      }
     
       // Compute heat index in Fahrenheit (the default)
       float hif = dht.computeHeatIndex(f, h);
       // Compute heat index in Celsius (isFahreheit = false)
       float hic = dht.computeHeatIndex(t, h, false);
-    
-      str = String(f,2);
-      str.toCharArray(strCh,9);
-      client.publish(temperaturepub, strCh);
-      client.loop();
-      str = String(h,2);
-      str.toCharArray(strCh,9);
-      client.publish(humiditypub, strCh);
-      client.loop();
-      str = String(hif,2);
-      str.toCharArray(strCh,9);
-      client.publish(tempindexpub, strCh);
-      client.loop();
+
+      #ifndef LOCAL
+        str = String(f,2);
+        str.toCharArray(strCh,9);
+        client.publish(temperaturepub, strCh);
+        str = String(h,2);
+        str.toCharArray(strCh,9);
+        client.publish(humiditypub, strCh);
+        str = String(hif,2);
+        str.toCharArray(strCh,9);
+        client.publish(tempindexpub, strCh);
+        client.loop();
+      #endif 
       
       Serial.print("Humidity: ");
       Serial.print(h);
@@ -200,11 +216,13 @@ void loop() {
   if (motionState == 1)
 {
     Serial.println("Motion Event:");
-    client.publish(motionpub, "1");
+    #ifndef LOCAL
+      client.publish(motionpub, "1");
+      client.loop();
+    #endif
     display.setTextAlignment(TEXT_ALIGN_RIGHT);
     display.drawString(120,0, "M");
     display.display();
-    client.loop();
     delay (4000);
     display.clear();
     drawDHT(h,t,f);
