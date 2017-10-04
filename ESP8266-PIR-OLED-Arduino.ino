@@ -5,10 +5,10 @@
 #define MQTT_SOCKET_TIMEOUT 120
 
 /************ HARDWARE CONFIG (CHANGE THESE FOR YOUR SENSOR SETUP) ******************/
-#define LOCAL //Uncomment to disable remote sensor functionality (Wifi & MQTT)
-//#define OLED_SPI //Uncomment if using SPI OLED screen (assuming I2C otherwise)
-#define DEEPSLEEP //Uncomment if you want sensor to sleep after every update (Does NOT work with MOTION_ON or LED_ON which require constant uptime) - Note: Screen will turn off/on during reboot cycle
-#define FLIP_SCREEN //Uncomment if mounting to wall with USB connector on top
+#define REMOTE //Uncomment to enable remote sensor functionality (Wifi & MQTT)
+#define OLED_SPI //Uncomment if using SPI OLED screen (assuming I2C otherwise)
+#define DEEPSLEEP //Uncomment if you want sensor to sleep after every update (Does NOT work with MOTION_ON or LED_ON which require constant uptime)
+//#define FLIP_SCREEN //Uncomment if mounting to wall with USB connector on top
 //#define MOTION_ON //Uncomment if using motion sensor
 //#define OLED_MOTION //Uncomment if you want screen to turn on only if motion is detected
 //#define LED_ON //Uncomment if using as LED controller
@@ -85,7 +85,7 @@ void setup() {
   display.setFont(ArialMT_Plain_10);
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   
-  #ifndef LOCAL    
+  #ifdef REMOTE    
     setup_wifi();
   
     client.setServer(mqtt_server, 1883); //CHANGE PORT HERE IF NEEDED
@@ -143,7 +143,7 @@ void loop() {
 
   char strCh[10];
   String str;
-  #ifndef LOCAL  
+  #ifdef REMOTE  
     if (!client.loop()) {
       reconnect();
     }
@@ -174,7 +174,7 @@ void loop() {
       // Compute heat index in Celsius (isFahreheit = false)
       float hic = dht.computeHeatIndex(t, h, false);
 
-      #ifndef LOCAL
+      #ifdef REMOTE
         str = String(f,2);
         str.toCharArray(strCh,9);
         client.publish(temperaturepub, strCh);
@@ -216,7 +216,7 @@ void loop() {
   if (motionState == 1)
 {
     Serial.println("Motion Event:");
-    #ifndef LOCAL
+    #ifdef REMOTE
       client.publish(motionpub, "1");
       client.loop();
     #endif
