@@ -63,9 +63,9 @@ Board Wire Color OLED
 
 Gnd Black Gnd
 
-D10 Yellow SDA
+D10 Yellow SCL
 
-D9 Brown SCL
+D9 Brown SDA
 
 
 Final Assembly:
