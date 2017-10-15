@@ -8,7 +8,7 @@ Note: The parts list I posted on the Thingiverse site (and below) contains affil
 
 -OLED screen (http://amzn.to/2xR4iQP)
 
--NodeMCU breakout board (https://oshpark.com/shared_projects/ydu9wQbQ)
+-NodeMCU breakout board (https://www.oshpark.com/shared_projects/siC2M0pd)
 
 -NodeMCU ESP8266 dev board v0.9 (http://amzn.to/2xd8Hvt) or 1.0 (http://amzn.to/2ymAkak).
 
