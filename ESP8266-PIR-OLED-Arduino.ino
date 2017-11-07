@@ -260,7 +260,7 @@ void loop() {
     display.display();
     delay (4000);
     display.clear();
-    drawDHT(h,t,f);
+    drawDHT(h,t,f,p);
     display.display();
   }
 #else
