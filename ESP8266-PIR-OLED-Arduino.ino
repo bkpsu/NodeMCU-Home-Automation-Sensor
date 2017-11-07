@@ -5,27 +5,23 @@
 #define MQTT_SOCKET_TIMEOUT 120
 
 /************ HARDWARE CONFIG (CHANGE THESE FOR YOUR SENSOR SETUP) ******************/
-#define REMOTE //Uncomment to enable remote sensor functionality (Wifi & MQTT)
+//#define REMOTE //Uncomment to enable remote sensor functionality (Wifi & MQTT)
 //#define OLED_SPI //Uncomment if using SPI OLED screen (assuming I2C otherwise)
 #define CELSIUS //Uncomment if you want temperature displayed in Celsius
 //#define DEEP_SLEEP //Uncomment if you want sensor to sleep after every update (Does NOT work with MOTION_ON or LED_ON which require constant uptime)
 #define FLIP_SCREEN //Uncomment if mounting to wall with USB connector on top
-#define MOTION_ON //Uncomment if using motion sensor
+//#define MOTION_ON //Uncomment if using motion sensor
 //#define OLED_MOTION //Uncomment if you want screen to turn on only if motion is detected
 //#define LED_ON //Uncomment if using as LED controller
 //#define PRESS_ON //Uncomment if using as Pressure monitor
-#define OTA_UPDATE //Uncomment if using OTA updates
 
-/************ WIFI, OTA and MQTT INFORMATION (CHANGE THESE FOR YOUR SETUP) ******************/
+/************ WIFI and MQTT INFORMATION (CHANGE THESE FOR YOUR SETUP) ******************/
 #define wifi_ssid "wifi_ssid" //enter your WIFI SSID
 #define wifi_password "wifi_password" //enter your WIFI Password
 #define mqtt_server "mqtt_server" // Enter your MQTT server address or IP.
 #define mqtt_device "mqtt_device" //MQTT device
 #define mqtt_user "" //enter your MQTT username
 #define mqtt_password "" //enter your password
-#define OTApassword "123" // change this to whatever password you want to use when you upload OTA
-#define OTANAME "Esp-pir-oled"
-int OTAport = 8266;
 
 /****************************** MQTT TOPICS (change these topics as you wish)  ***************************************/
 #define temperaturepub "home/mqtt_device/temperature"
@@ -45,25 +41,17 @@ float hum_offset = 14.9;
 #define MOTIONPIN 5   // (D1) what digital pin the motion sensor is connected to
 #define PRESSPIN 5    // (D1) what digital pin the motion sensor is connected to
 
-#define DHTTYPE DHT22   // DHT 22/11 (AM2302), AM2321
+#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
 
+#include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include "DHT.h"
 
 #ifdef OLED_SPI
   #include "SSD1306Spi.h" //OLED Lib for SPI version
-#else
+#else 
   #include <Wire.h>  // Only needed for Arduino 1.6.5 and earlier
   #include "SSD1306.h" //OLED Lib for I2C version
-#endif
-
-#ifdef OTA_UPDATE
-  #include <ESP8266WiFi.h>
-  #include <ESP8266mDNS.h>
-  #include <WiFiUdp.h>
-  #include <ArduinoOTA.h>
-#else
-  #include <ESP8266WiFi.h>
 #endif
 
 DHT dht(DHTPIN, DHTTYPE);
@@ -101,48 +89,22 @@ void setup() {
   display.init();
 
   #ifdef FLIP_SCREEN
-    display.flipScreenVertically();
+    display.flipScreenVertically(); 
   #endif
   display.setFont(ArialMT_Plain_10);
   display.setTextAlignment(TEXT_ALIGN_LEFT);
-
-  #ifdef REMOTE
+  
+  #ifdef REMOTE    
     setup_wifi();
-
+  
     client.setServer(mqtt_server, 1883); //CHANGE PORT HERE IF NEEDED
   #else
     WiFi.mode(WIFI_OFF);
   #endif
-
-    ArduinoOTA.setPort(OTAport);
-    ArduinoOTA.setHostname(OTANAME);
-    ArduinoOTA.setPassword((const char *)OTApassword);
-
-    ArduinoOTA.onStart([]() {
-      Serial.println("Start");
-    });
-    ArduinoOTA.onEnd([]() {
-      Serial.println("\nEnd");
-      ESP.restart();
-    });
-    ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-      Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-    });
-    ArduinoOTA.onError([](ota_error_t error) {
-      Serial.printf("Error[%u]: ", error);
-      if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-      else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-      else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-      else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-      else if (error == OTA_END_ERROR) Serial.println("End Failed");
-    });
-    ArduinoOTA.begin();
-    Serial.println("OTA Ready");
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
 }
 
 void setup_wifi() {
+
   delay(10);
   Serial.println();
   Serial.print("Connecting to ");
@@ -150,7 +112,7 @@ void setup_wifi() {
 
   //display.drawString(0,0,"Wifi: " + String(wifi_ssid));
   //display.display();
-
+  
   WiFi.mode(WIFI_STA);
   WiFi.begin(wifi_ssid, wifi_password);
   //WiFi.printDiag(Serial);
@@ -176,7 +138,7 @@ void drawDHT(float h, float t, float f, float p)
   display.setFont(ArialMT_Plain_10);
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.drawString(0,0, String(mqtt_device));
-  display.setFont(ArialMT_Plain_24);
+  display.setFont(ArialMT_Plain_24);  
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   #ifdef CELSIUS
     display.drawString(60,18, String(t) + " *C");
@@ -197,27 +159,27 @@ void drawDHT(float h, float t, float f, float p)
 }
 
 void loop() {
-  ArduinoOTA.handle();
+
   char strCh[10];
   String str;
-  #ifdef REMOTE
+  #ifdef REMOTE  
     if (!client.loop()) {
       reconnect();
     }
   #endif
-
+ 
   if(currentMillis - previousMillis > interval) {
       previousMillis = currentMillis;
-
+  
       h = dht.readHumidity();
       // Read temperature as Celsius (the default)
       t = dht.readTemperature();
       // Read temperature as Fahrenheit (isFahrenheit = true)
       f = dht.readTemperature(true);
-
+      
       // Read pressure (if external pressure sensor connected)
       p = analogRead(PRESSPIN);
-
+    
       // Check if any reads failed and exit early (to try again).
       if (isnan(h) || isnan(t) || isnan(f)) {
         Serial.println("Failed to read from DHT sensor!");
@@ -228,7 +190,7 @@ void loop() {
         f = f + temp_offset;
         h = h + hum_offset;
       }
-
+    
       // Compute heat index in Fahrenheit (the default)
       float hif = dht.computeHeatIndex(f, h);
       // Compute heat index in Celsius (isFahreheit = false)
@@ -256,8 +218,8 @@ void loop() {
         str = String(p,2);
         str.toCharArray(strCh,9);
         client.publish(presspub, strCh);
-      #endif
-
+      #endif 
+      
       Serial.print("Humidity: ");
       Serial.print(h);
       Serial.print(" %\t");
@@ -337,3 +299,4 @@ void reconnect() {
     }
   }
 }
+
