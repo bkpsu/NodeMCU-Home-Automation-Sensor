@@ -14,19 +14,16 @@
 //#define OLED_MOTION //Uncomment if you want screen to turn on only if motion is detected
 //#define LED_ON //Uncomment if using as LED controller
 //#define PRESS_ON //Uncomment if using as Pressure monitor
-#define OTA_UPDATE //Uncomment if using OTA updates
+#define OTA_UPDATE //Uncomment if using OTA updates - REMOTE also needs uncommenting
 
 /************ WIFI, OTA and MQTT INFORMATION (CHANGE THESE FOR YOUR SETUP) ******************/
 #define wifi_ssid "wifi_ssid" //enter your WIFI SSID
 #define wifi_password "wifi_password" //enter your WIFI Password
 #define mqtt_server "mqtt_server" // Enter your MQTT server address or IP.
-#define mqtt_device "mqtt_device" //MQTT device
+#define mqtt_device "mqtt_device" //MQTT device for broker and OTA name
 #define mqtt_user "" //enter your MQTT username
 #define mqtt_password "" //enter your password
 #define OTApassword "123" // change this to whatever password you want to use when you upload OTA
-#define OTANAME "Esp-pir-oled"
-int OTAport = 8266;
-
 /****************************** MQTT TOPICS (change these topics as you wish)  ***************************************/
 #define temperaturepub "home/mqtt_device/temperature"
 #define humiditypub "home/mqtt_device/humidity"
@@ -49,6 +46,7 @@ float hum_offset = 14.9;
 
 #include <PubSubClient.h>
 #include "DHT.h"
+#include <ESP8266WiFi.h>
 
 #ifdef OLED_SPI
   #include "SSD1306Spi.h" //OLED Lib for SPI version
@@ -57,13 +55,10 @@ float hum_offset = 14.9;
   #include "SSD1306.h" //OLED Lib for I2C version
 #endif
 
-#ifdef OTA_UPDATE
-  #include <ESP8266WiFi.h>
+#ifdef OTA_UPDATE && REMOTE
   #include <ESP8266mDNS.h>
   #include <WiFiUdp.h>
   #include <ArduinoOTA.h>
-#else
-  #include <ESP8266WiFi.h>
 #endif
 
 DHT dht(DHTPIN, DHTTYPE);
@@ -114,8 +109,14 @@ void setup() {
     WiFi.mode(WIFI_OFF);
   #endif
 
-    ArduinoOTA.setPort(OTAport);
-    ArduinoOTA.setHostname(OTANAME);
+  #ifdef OTA_UPDATE && REMOTE
+    setupOTA();
+  #endif
+}
+
+void setupOTA (){
+    ArduinoOTA.setPort(8266); // change this is you wish to use a different port
+    ArduinoOTA.setHostname(mqtt_device);
     ArduinoOTA.setPassword((const char *)OTApassword);
 
     ArduinoOTA.onStart([]() {
@@ -137,9 +138,7 @@ void setup() {
       else if (error == OTA_END_ERROR) Serial.println("End Failed");
     });
     ArduinoOTA.begin();
-    Serial.println("OTA Ready");
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
+    Serial.print("OTA running");
 }
 
 void setup_wifi() {
@@ -197,7 +196,10 @@ void drawDHT(float h, float t, float f, float p)
 }
 
 void loop() {
+  #ifdef REMOTE && OTA_UPDATE
   ArduinoOTA.handle();
+  #endif
+
   char strCh[10];
   String str;
   #ifdef REMOTE
