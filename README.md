@@ -57,9 +57,7 @@ D5 Brown D0
 
 For I2C OLED:
 
-![Diagram](/NodeMCU-Home-Automation-Sensor/OLED I2C Hookup.png)
-
-NodeMCU-Home-Automation-Sensor/OLED I2C Hookup.png
+![Diagram](https://github.com/bkpsu/NodeMCU-Home-Automation-Sensor/raw/master/OLED%20I2C%20Hookup.png)
 
 Board Wire Color OLED
 
