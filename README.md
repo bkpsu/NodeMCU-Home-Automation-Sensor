@@ -57,7 +57,7 @@ D5 Brown D0
 
 For I2C OLED:
 
-[Diagram](/OLED I2C Hookup.png)
+![Diagram](/NodeMCU-Home-Automation-Sensor/OLED I2C Hookup.png)
 
 NodeMCU-Home-Automation-Sensor/OLED I2C Hookup.png
 
