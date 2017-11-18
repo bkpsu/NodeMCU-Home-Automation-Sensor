@@ -57,15 +57,19 @@ D5 Brown D0
 
 For I2C OLED:
 
+[Diagram](/OLED I2C Hookup.png)
+
+NodeMCU-Home-Automation-Sensor/OLED I2C Hookup.png
+
 Board Wire Color OLED
 
 3v3 Red VCC
 
 Gnd Black Gnd
 
-D10 Yellow SCL
+D10 Blue SCL
 
-D9 Brown SDA
+D9 Green SDA
 
 
 Final Assembly:
