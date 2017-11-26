@@ -1,4 +1,4 @@
-//DHT, Motion and OLED sketch for "The Kube" sensor
+//Sketch for "The Kube" sensor, incorporating the ESP8266 with OLED screen, DHT22 sensor, OTA and other external sensors.
 
 //by bkpsu, https://www.thingiverse.com/thing:2539897
 
@@ -7,14 +7,14 @@
 /************ HARDWARE CONFIG (CHANGE THESE FOR YOUR SENSOR SETUP) ******************/
 #define REMOTE //Uncomment to enable remote sensor functionality (Wifi & MQTT)
 //#define OLED_SPI //Uncomment if using SPI OLED screen (assuming I2C otherwise)
-#define CELSIUS //Uncomment if you want temperature displayed in Celsius
-//#define DEEP_SLEEP //Uncomment if you want sensor to sleep after every update (Does NOT work with MOTION_ON or LED_ON which require constant uptime)
-#define FLIP_SCREEN //Uncomment if mounting to wall with USB connector on top
-#define MOTION_ON //Uncomment if using motion sensor
+//#define CELSIUS //Uncomment if you want temperature displayed in Celsius
+//#define DEEP_SLEEP //Uncomment if you want sensor to sleep after every update (Does NOT work with MOTION_ON, LED_ON or OTA_UPDATE which require constant uptime)
+//#define FLIP_SCREEN //Uncomment if mounting to wall with USB connector on top
+//#define MOTION_ON //Uncomment if using motion sensor
 //#define OLED_MOTION //Uncomment if you want screen to turn on only if motion is detected
 //#define LED_ON //Uncomment if using as LED controller
 //#define PRESS_ON //Uncomment if using as Pressure monitor
-#define OTA_UPDATE //Uncomment if using OTA updates - REMOTE also needs uncommenting
+#define OTA_UPDATE //Uncomment if using OTA updates - REMOTE also needs uncommenting and DEEPSLEEP needs to be commented out
 
 /************ WIFI, OTA and MQTT INFORMATION (CHANGE THESE FOR YOUR SETUP) ******************/
 #define wifi_ssid "wifi_ssid" //enter your WIFI SSID
@@ -105,13 +105,13 @@ void setup() {
     setup_wifi();
 
     client.setServer(mqtt_server, 1883); //CHANGE PORT HERE IF NEEDED
+    #ifdef OTA_UPDATE
+       setupOTA();
+    #endif
   #else
     WiFi.mode(WIFI_OFF);
   #endif
 
-  #ifdef OTA_UPDATE && REMOTE
-    setupOTA();
-  #endif
 }
 
 void setupOTA (){
@@ -305,7 +305,9 @@ void loop() {
   }
 #else
   #ifdef DEEP_SLEEP
-   ESP.deepSleep(60000000,WAKE_RF_DEFAULT);   //If a motion sensor is not being used, we can put ESP into deep-sleep to save energy/wifi channel
+    #ifndef OTA
+      ESP.deepSleep(60000000,WAKE_RF_DEFAULT);   //If a motion sensor is not being used, we can put ESP into deep-sleep to save energy/wifi channel
+    #endif
   #endif
 #endif
 }
