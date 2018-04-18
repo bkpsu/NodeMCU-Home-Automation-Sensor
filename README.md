@@ -3,7 +3,7 @@ Code for Thingiverse item https://www.thingiverse.com/thing:2539897 (The Kube - 
 
 Note: The parts list I posted on the Thingiverse site (and below) contains affiliate links to Amazon. These are the parts I've used/tested in building my sensors, and if you wish to support my designs, please go ahead and use them to order parts. Thank you and enjoy!
 
-![Demo & Overview](https://youtu.be/VefbT6RuT-4)
+[![Demo & Overview](https://img.youtube.com/vi/VefbT6RuT-4/0.jpg)](https://www.youtube.com/watch?v=VefbT6RuT-4)
 
 # Parts List
   *3D printed enclosure (https://www.thingiverse.com/thing:2539897)  
@@ -58,9 +58,9 @@ Final Assembly:
 
 3. Put enclosure cover on, and secure with small screws (or glue in place)
 
-![Hardware Build Video](https://youtu.be/fA91LcJRbhI)
+[![Hardware Build Video](https://img.youtube.com/vi/fA91LcJRbhI/0.jpg)](https://www.youtube.com/watch?v=fA91LcJRbhI)
 
-Program sensor.
+# Program sensor
 
-![Arduino Programming Video](https://youtu.be/uDsnqi1Vl4U)
+[![Arduino Programming Video](https://img.youtube.com/vi/uDsnqi1Vl4U/0.jpg)](https://img.youtube.com/vi/uDsnqi1Vl4U)
 
