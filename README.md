@@ -12,7 +12,7 @@ Note: The parts list I posted on the Thingiverse site (and below) contains affil
   *NodeMCU ESP8266 dev board v0.9 (http://amzn.to/2hd6RJk) or 1.0 (http://amzn.to/2ymAkak).  
   *DHT-22 sensor (http://amzn.to/2ymmODK)  
   *headers (http://amzn.to/2fNe81C)  
-  *solid hook-up wire, 22awg (http://amzn.to/2xbTaAW)
+  *solid hook-up wire, 22awg (https://amzn.to/2voliAb)
 
 # Build Procedure
 
