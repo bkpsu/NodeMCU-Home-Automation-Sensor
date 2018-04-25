@@ -17,8 +17,8 @@
 #define OTA_UPDATE //Uncomment if using OTA updates - REMOTE also needs uncommenting and DEEPSLEEP needs to be commented out
 
 /************ WIFI, OTA and MQTT INFORMATION (CHANGE THESE FOR YOUR SETUP) ******************/
-#define wifi_ssid "wifi_ssid" //enter your WIFI SSID
-#define wifi_password "wifi_password" //enter your WIFI Password
+//#define wifi_ssid "wifi_ssid" //enter your WIFI SSID
+//#define wifi_password "wifi_password" //enter your WIFI Password
 #define mqtt_server "mqtt_server" // Enter your MQTT server address or IP.
 #define mqtt_device "mqtt_device" //MQTT device for broker and OTA name
 #define mqtt_user "" //enter your MQTT username
@@ -40,13 +40,14 @@ float hum_offset = 14.9;
 
 #define DHTPIN 4      // (D2) what digital pin we're connected to
 #define MOTIONPIN 5   // (D1) what digital pin the motion sensor is connected to
-#define PRESSPIN 5    // (D1) what digital pin the motion sensor is connected to
+#define PRESSPIN A0    // (A0) what analog pin the pressure sensor is connected to
 
 #define DHTTYPE DHT22   // DHT 22/11 (AM2302), AM2321
 
 #include <PubSubClient.h>
 #include "DHT.h"
 #include <ESP8266WiFi.h>
+#include <WiFiManager.h> //testing Wifimanager
 
 #ifdef OLED_SPI
   #include "SSD1306Spi.h" //OLED Lib for SPI version
@@ -65,7 +66,7 @@ DHT dht(DHTPIN, DHTTYPE);
 
 unsigned long currentMillis = 60001; //Set so temperature's read on first scan of program
 unsigned long previousMillis = 0;
-unsigned long interval = 60000;
+unsigned long interval = 5000;
 
 float h,t,f,p;
 int motionState;
@@ -90,7 +91,7 @@ void setup() {
     pinMode(MOTIONPIN, INPUT);
   #endif
   #ifdef PRESS_ON
-    pinMode(PRESSPIN, INPUT);
+    //pinMode(PRESSPIN, INPUT);
   #endif
 
   display.init();
@@ -145,29 +146,32 @@ void setup_wifi() {
   delay(10);
   Serial.println();
   Serial.print("Connecting to ");
-  Serial.println(wifi_ssid);
+//  Serial.println(wifi_ssid);
 
   //display.drawString(0,0,"Wifi: " + String(wifi_ssid));
   //display.display();
 
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(wifi_ssid, wifi_password);
-  //WiFi.printDiag(Serial);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
+  //WiFi.mode(WIFI_STA);
+  //WiFi.begin(wifi_ssid, wifi_password);
+  ////WiFi.printDiag(Serial);
+  //while (WiFi.status() != WL_CONNECTED) {
+  //  delay(500);
+  //  Serial.print(".");
+  //}
 
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  //Serial.println(WiFi.localIP());
 
   //display.setTextAlignment(TEXT_ALIGN_RIGHT);
   //display.drawString(120,10, "OK");
   //display.setTextAlignment(TEXT_ALIGN_LEFT);
   //display.drawString(0,20, "IP: " + WiFi.localIP());
   //display.display();
+
+  WiFiManager wifiManager;
+  wifiManager.autoConnect("AutoConnectAP");
 }
 
 void drawDHT(float h, float t, float f, float p)
@@ -219,6 +223,7 @@ void loop() {
 
       // Read pressure (if external pressure sensor connected)
       p = analogRead(PRESSPIN);
+      p = ((p/1023)*16.6246)-8.3123; //Convert analog value from MPXV7002 differential pressure sensor to psi range (-8...8 in/h2O) via formula ((ain/max_analog)*full range)-offset
 
       // Check if any reads failed and exit early (to try again).
       if (isnan(h) || isnan(t) || isnan(f)) {
