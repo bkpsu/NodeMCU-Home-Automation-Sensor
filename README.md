@@ -64,3 +64,8 @@ Final Assembly:
 
 [![Arduino Programming Video](https://img.youtube.com/vi/uDsnqi1Vl4U/0.jpg)](https://img.youtube.com/vi/uDsnqi1Vl4U)
 
+#Connect to openHAB
+
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTU0Nzk1ODk3N119
+-->
