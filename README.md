@@ -67,8 +67,9 @@ Just follow the video below to program the sensor in Arduino IDE using the code 
 # Connect to openHAB and Calibrate
 Now that we have the sensor built and running, we have to connect it to openHAB - watch the following video on how to do that using the provided MQTT topics, and how to calibrate the sensor by charting its readings against another sensor, thermostat, temperature gauge, etc..
 
-![openHAB connection video](https://youtu.be/yHt19wZBnDo)
+![openHAB connection video](https://img.youtube.com/vi/yHt19wZBnDo/0.jpg)
 
+That's it! Enjoy the sensor and please contribute to its further design by opening new issues or comments in this reposit
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTA2ODU4Nzg3LC01NDc5NTg5NzddfQ==
+eyJoaXN0b3J5IjpbMTEwMjEyMjcyMiwtNTQ3OTU4OTc3XX0=
 -->
