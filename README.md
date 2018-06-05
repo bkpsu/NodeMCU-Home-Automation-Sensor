@@ -69,7 +69,7 @@ Now that we have the sensor built and running, we have to connect it to openHAB 
 
 ![openHAB connection video](https://img.youtube.com/vi/yHt19wZBnDo/0.jpg)
 
-That's it! Enjoy the sensor and please contribute to its further design by opening new issues or comments in this reposit
+That's it! Enjoy the sensor and please contribute to its further design by opening new issues or comments in this repository!
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTEwMjEyMjcyMiwtNTQ3OTU4OTc3XX0=
+eyJoaXN0b3J5IjpbMTc2NDY1NTFdfQ==
 -->
