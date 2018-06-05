@@ -61,11 +61,12 @@ Final Assembly:
 [![Hardware Build Video](https://img.youtube.com/vi/fA91LcJRbhI/0.jpg)](https://www.youtube.com/watch?v=fA91LcJRbhI)
 
 # Program sensor
-
+Just follow the video below to program the sensor in Arduino IDE using the code provided in this repository.
 [![Arduino Programming Video](https://img.youtube.com/vi/uDsnqi1Vl4U/0.jpg)](https://img.youtube.com/vi/uDsnqi1Vl4U)
 
-#Connect to openHAB
+# Connect to openHAB and Calibrate
+Now that we have the sensor built and running, we have to connect it 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU0Nzk1ODk3N119
+eyJoaXN0b3J5IjpbMTkyODQzMDY4NCwtNTQ3OTU4OTc3XX0=
 -->
