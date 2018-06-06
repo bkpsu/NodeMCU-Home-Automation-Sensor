@@ -14,6 +14,7 @@
 //#define OLED_MOTION //Uncomment if you want screen to turn on only if motion is detected
 //#define LED_ON //Uncomment if using as LED controller
 //#define PRESS_ON //Uncomment if using as Pressure monitor
+//#define ANTI_BURNIN //Uncomment if you want the OLED to invert colors every time the sensor is updated (to prevent burnin)
 #define OTA_UPDATE //Uncomment if using OTA updates - REMOTE also needs uncommenting and DEEPSLEEP needs to be commented out
 
 /************ WIFI, OTA and MQTT INFORMATION (CHANGE THESE FOR YOUR SETUP) ******************/
@@ -280,9 +281,10 @@ void loop() {
       Serial.println(" *F");
       Serial.print(p);
       Serial.println(" in/H2O");
-
+#ifdef ANTI_BURNIN
       display.invertDisplay();
       display.display();
+#endif
       display.clear();
       display.normalDisplay();
       drawDHT(h,t,f,p);
