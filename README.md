@@ -62,6 +62,9 @@ Final Assembly:
 
 # Program sensor
 Just follow the video below to program the sensor in Arduino IDE using the code provided in this repository.
+
+**Note** Since this video was posted, I updated the code to use the WiFiManager library and allow the ESP8266 to create its own access point (AP). This means you no longer have to specify the Wifi SSID or password in the code. Simply load the code onto the ESP8266, power it on, and look for it in your phone's WiFI settings. Once you connect to it, it will handle connecting to your home's Wifi via a web-based process. This takes one step away from the programming procedure, but please still watch the video below to understand how the different options affect the sensor's operation.
+
 [![Arduino Programming Video](https://img.youtube.com/vi/uDsnqi1Vl4U/0.jpg)](https://img.youtube.com/vi/uDsnqi1Vl4U)
 
 # Connect to openHAB and Calibrate
