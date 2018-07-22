@@ -49,7 +49,6 @@ float hum_offset = 14.9;
 #include "DHT.h"
 #include <ESP8266WiFi.h>
 #include <WiFiManager.h> //testing Wifimanager
-
 #ifdef OLED_SPI
   #include "SSD1306Spi.h" //OLED Lib for SPI version
 #else
@@ -67,9 +66,9 @@ DHT dht(DHTPIN, DHTTYPE);
 
 unsigned long currentMillis = 60001; //Set so temperature's read on first scan of program
 unsigned long previousMillis = 0;
-unsigned long interval = 5000;
+unsigned long interval = 10000;
 
-float h,t,f,p;
+float h,t,f,p,h2,t2,f2,p2;//Added %2 for error correction
 int motionState;
 
 WiFiClient espClient;
@@ -78,14 +77,13 @@ PubSubClient client(espClient);
 #ifdef OLED_SPI
   SSD1306Spi  display(D10, D9, D8); //RES, DC, CS (SPI Initialization)
 #else
-  SSD1306     display(0x3c, 3 /*D9*/, 1 /*D10*/); //0 /*D3*/, 2 /*D4*/); //SDA, SCL (I2C Initialization)
+  //SSD1306     display(0x3c, 3 /*D9*/, 1 /*D10*/); //
+  SSD1306     display(0x3c, 0 /*D3*/, 2 /*D4*/); //Used D3-D4 so USB serial monitor works, since it uses D9-D10
 #endif
 
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("ESP8266 PIR/OLED/DHT Sensor");
-
   dht.begin();
 
   #ifdef MOTION_ON
@@ -163,7 +161,7 @@ void setup_wifi() {
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
-  //Serial.println(WiFi.localIP());
+  Serial.println(WiFi.localIP());
 
   //display.setTextAlignment(TEXT_ALIGN_RIGHT);
   //display.drawString(120,10, "OK");
@@ -183,9 +181,9 @@ void drawDHT(float h, float t, float f, float p)
   display.setFont(ArialMT_Plain_24);
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   #ifdef CELSIUS
-    display.drawString(60,18, String(t) + " *C");
+    display.drawString(60,18, String(t,1) + " *C");
   #else
-    display.drawString(60,18, String(f) + " *F");
+    display.drawString(60,18, String(f,1) + " *F");
   #endif
   display.setFont(ArialMT_Plain_10);
   #ifdef PRESS_ON
@@ -197,7 +195,7 @@ void drawDHT(float h, float t, float f, float p)
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.drawString(0,50,"Hum: ");
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
-  display.drawString(120,50, String(h) + " %");
+  display.drawString(120,50, String(h,1) + " %");
 }
 
 void loop() {
@@ -228,13 +226,20 @@ void loop() {
 
       // Check if any reads failed and exit early (to try again).
       if (isnan(h) || isnan(t) || isnan(f)) {
-        Serial.println("Failed to read from DHT sensor!");
-        h=t=f=-1;
+        Serial.println("Failed to read from DHT sensor!");  `
+        //h=t=f=-1;
+        t=t2;//Writes previous read values if the read attempt failed
+        f=f2;
+        h=h2;
+        
       }
       else { //add offsets, if any
         t = t + ((5 / 9) * temp_offset);
         f = f + temp_offset;
         h = h + hum_offset;
+        h2=h;//Store values encase next read fails
+        t2=t;
+        f2=f;
       }
 
       // Compute heat index in Fahrenheit (the default)
@@ -244,13 +249,13 @@ void loop() {
 
       #ifdef REMOTE
         #ifdef CELSIUS
-          str = String(t,2);
+          str = String(t,1);
         #else
-          str = String(f,2);
+          str = String(f,1);
         #endif
         str.toCharArray(strCh,9);
         client.publish(temperaturepub, strCh);
-        str = String(h,2);
+        str = String(h,1);
         str.toCharArray(strCh,9);
         client.publish(humiditypub, strCh);
         #ifdef CELSIUS
@@ -267,19 +272,19 @@ void loop() {
       #endif
 
       Serial.print("Humidity: ");
-      Serial.print(h);
+      Serial.print(h,1);
       Serial.print(" %\t");
       Serial.print("Temperature: ");
-      Serial.print(t);
+      Serial.print(t,1);
       Serial.print(" *C ");
-      Serial.print(f);
+      Serial.print(f,1);
       Serial.print(" *F\t");
       Serial.print("Heat index: ");
-      Serial.print(hic);
+      Serial.print(hic,1);
       Serial.print(" *C ");
-      Serial.print(hif);
+      Serial.print(hif,1);
       Serial.println(" *F");
-      Serial.print(p);
+      Serial.print(p,1);
       Serial.println(" in/H2O");
 #ifdef ANTI_BURNIN
       display.invertDisplay();
@@ -287,7 +292,11 @@ void loop() {
 #endif
       display.clear();
       display.normalDisplay();
+#ifdef OLED_MOTION //Clears display on each loop if OLD Motion is active, otherwise prints display as usual
+      display.clear();
+#else
       drawDHT(h,t,f,p);
+#endif  
       display.display();
   }
   currentMillis = millis();
@@ -304,8 +313,11 @@ void loop() {
     #endif
     display.setTextAlignment(TEXT_ALIGN_RIGHT);
     display.drawString(120,0, "M");
+    #ifdef OLED_MOTION//Writes the whole display if motion is sensed, otherwise just the "M"
+    drawDHT(h,t,f,p);
+    #endif
     display.display();
-    delay (4000);
+    delay (10000);
     display.clear();
     drawDHT(h,t,f,p);
     display.display();
@@ -344,7 +356,7 @@ void reconnect() {
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
-      delay(5000);
+      delay(10000);
     }
   }
 }
