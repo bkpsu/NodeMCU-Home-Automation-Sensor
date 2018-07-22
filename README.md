@@ -1,4 +1,5 @@
 # NodeMCU-Home-Automation-Sensor (a.k.a. The Kube)
+
 Code for Thingiverse item https://www.thingiverse.com/thing:2539897 (The Kube - a NodeMCU/DHT22 based MQTT temp/humidity sensor with local OLED display)
 
 Note: The parts list I posted on the Thingiverse site (and below) contains affiliate links to Amazon. These are the parts I've used/tested in building my sensors, and if you wish to support my designs, please go ahead and use them to order parts. Thank you and enjoy!
@@ -6,6 +7,7 @@ Note: The parts list I posted on the Thingiverse site (and below) contains affil
 [![Demo & Overview](https://img.youtube.com/vi/VefbT6RuT-4/0.jpg)](https://www.youtube.com/watch?v=VefbT6RuT-4)
 
 # Parts List
+
   *3D printed enclosure (https://www.thingiverse.com/thing:2539897)  
   *OLED screen (http://amzn.to/2xR4iQP)  
   *NodeMCU breakout board (https://goo.gl/U2fY7y)  
@@ -61,18 +63,30 @@ Final Assembly:
 [![Hardware Build Video](https://img.youtube.com/vi/fA91LcJRbhI/0.jpg)](https://www.youtube.com/watch?v=fA91LcJRbhI)
 
 # Program sensor
+
 Just follow the video below to program the sensor in Arduino IDE using the code provided in this repository.
 
 **Note** Since this video was posted, I updated the code to use the WiFiManager library and allow the ESP8266 to create its own access point (AP). This means you no longer have to specify the Wifi SSID or password in the code. Simply load the code onto the ESP8266, power it on, and look for it in your phone's WiFI settings. Once you connect to it, it will handle connecting to your home's Wifi via a web-based process. This takes one step away from the programming procedure, but please still watch the video below to understand how the different options affect the sensor's operation.
 
+**Note 2** Make sure you have the following Arduino Board files and Libraries installed in order to avoid compilation/runtime errors:  
+**Board Files**  
+ESP8266 by ESP8266 Community (v 2.4.1 or higher)  
+**Libraries**  
+Adafruit Unified Sensor by Adafruit (v 1.0.2 or higher)  
+ArduinoOTA by Ivan Grokhotkov and Miguel Angel Ajo (v 1.0.0 or higher)  
+DHT Sensor Library by Adafruit (v 1.3.0 or higher)  
+ESP8266 and ESP32 Oled Driver for SSD1306 Display by Daniel Eichhorn, Fabrice Weinberg (v 4.0.0 or higher)  
+ESP8266mDNS  
+ESP8266WiFi by Ivan Grokhotkov (v 1.0.0 or higher)  
+PubSubClient by Nick O'Leary (v 2.6.0 or higher)  
+WiFiManager by tzapu (v 0.12.0 or higher)  
+
 [![Arduino Programming Video](https://img.youtube.com/vi/uDsnqi1Vl4U/0.jpg)](https://img.youtube.com/vi/uDsnqi1Vl4U)
 
 # Connect to openHAB and Calibrate
+
 Now that we have the sensor built and running, we have to connect it to openHAB - watch the following video on how to do that using the provided MQTT topics, and how to calibrate the sensor by charting its readings against another sensor, thermostat, temperature gauge, etc..
 
 ![openHAB connection video](https://img.youtube.com/vi/yHt19wZBnDo/0.jpg)
 
 That's it! Enjoy the sensor and please contribute to its further design by opening new issues or comments in this repository!
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc2NDY1NTFdfQ==
--->

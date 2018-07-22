@@ -77,8 +77,8 @@ PubSubClient client(espClient);
 #ifdef OLED_SPI
   SSD1306Spi  display(D10, D9, D8); //RES, DC, CS (SPI Initialization)
 #else
-  //SSD1306     display(0x3c, 3 /*D9*/, 1 /*D10*/); //
-  SSD1306     display(0x3c, 0 /*D3*/, 2 /*D4*/); //Used D3-D4 so USB serial monitor works, since it uses D9-D10
+  SSD1306     display(0x3c, 3 /*D9*/, 1 /*D10*/); //WARNING: Using these pins (defined in the Youtube videos and Readme file) will prevent the operation of the USB Serial monitor
+  //SSD1306     display(0x3c, 0 /*D3*/, 2 /*D4*/); //If you need to use the USB Serial Monitor, comment out the line above and uncomment this one
 #endif
 
 
@@ -292,7 +292,7 @@ void loop() {
 #endif
       display.clear();
       display.normalDisplay();
-#ifdef OLED_MOTION //Clears display on each loop if OLD Motion is active, otherwise prints display as usual
+#ifdef OLED_MOTION //Clears display on each loop if OLED Motion is active, otherwise prints display as usual
       display.clear();
 #else
       drawDHT(h,t,f,p);
