@@ -5,7 +5,7 @@
 #define MQTT_SOCKET_TIMEOUT 120
 
 /************ HARDWARE CONFIG (CHANGE THESE FOR YOUR SENSOR SETUP) ******************/
-#define REMOTE //Uncomment to enable remote sensor functionality (Wifi & MQTT)
+//#define REMOTE //Uncomment to enable remote sensor functionality (Wifi & MQTT)
 //#define OLED_SPI //Uncomment if using SPI OLED screen (assuming I2C otherwise)
 //#define CELSIUS //Uncomment if you want temperature displayed in Celsius
 //#define DEEP_SLEEP //Uncomment if you want sensor to sleep after every update (Does NOT work with MOTION_ON, LED_ON or OTA_UPDATE which require constant uptime)
@@ -14,23 +14,23 @@
 //#define OLED_MOTION //Uncomment if you want screen to turn on only if motion is detected
 //#define LED_ON //Uncomment if using as LED controller
 //#define PRESS_ON //Uncomment if using as Pressure monitor
-//#define ANTI_BURNIN //Uncomment if you want the OLED to invert colors every time the sensor is updated (to prevent burnin)
+#define ANTI_BURNIN //Uncomment if you want the OLED to invert colors every time the sensor is updated (to prevent burnin)
 #define OTA_UPDATE //Uncomment if using OTA updates - REMOTE also needs uncommenting and DEEPSLEEP needs to be commented out
 
 /************ WIFI, OTA and MQTT INFORMATION (CHANGE THESE FOR YOUR SETUP) ******************/
 //#define wifi_ssid "wifi_ssid" //enter your WIFI SSID
 //#define wifi_password "wifi_password" //enter your WIFI Password
-#define mqtt_server "mqtt_server" // Enter your MQTT server address or IP.
-#define mqtt_device "mqtt_device" //MQTT device for broker and OTA name
+#define mqtt_server "openhabianpi" // Enter your MQTT server address or IP.
+#define mqtt_device "Kube" //MQTT device for broker and OTA name
 #define mqtt_user "" //enter your MQTT username
 #define mqtt_password "" //enter your password
 #define OTApassword "123" // change this to whatever password you want to use when you upload OTA
 /****************************** MQTT TOPICS (change these topics as you wish)  ***************************************/
-#define temperaturepub "home/mqtt_device/temperature"
-#define humiditypub "home/mqtt_device/humidity"
-#define tempindexpub "home/mqtt_device/temperatureindex"
-#define motionpub "home/mqtt_device/motion"
-#define presspub  "home/mqtt_device/pressure"
+#define temperaturepub "home/Kube/temperature"
+#define humiditypub "home/Kube/humidity"
+#define tempindexpub "home/Kube/temperatureindex"
+#define motionpub "home/Kube/motion"
+#define presspub  "home/Kube/pressure"
 
 /****************************** DHT 22 Calibration settings *************/
 
@@ -77,8 +77,8 @@ PubSubClient client(espClient);
 #ifdef OLED_SPI
   SSD1306Spi  display(D10, D9, D8); //RES, DC, CS (SPI Initialization)
 #else
-  SSD1306     display(0x3c, 3 /*D9*/, 1 /*D10*/); //WARNING: Using these pins (defined in the Youtube videos and Readme file) will prevent the operation of the USB Serial monitor
-  //SSD1306     display(0x3c, 0 /*D3*/, 2 /*D4*/); //If you need to use the USB Serial Monitor, comment out the line above and uncomment this one
+  //SSD1306     display(0x3c, 3 /*D9*/, 1 /*D10*/); //WARNING: Using these pins (defined in the Youtube videos and Readme file) will prevent the operation of the USB Serial monitor
+  SSD1306     display(0x3c, 0 /*D3*/, 2 /*D4*/); //Recommended Setup: to be able to use the USB Serial Monitor, use the configuration on this line
 #endif
 
 
@@ -226,7 +226,7 @@ void loop() {
 
       // Check if any reads failed and exit early (to try again).
       if (isnan(h) || isnan(t) || isnan(f)) {
-        Serial.println("Failed to read from DHT sensor!");  `
+        Serial.println("Failed to read from DHT sensor!");
         //h=t=f=-1;
         t=t2;//Writes previous read values if the read attempt failed
         f=f2;

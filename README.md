@@ -1,5 +1,12 @@
 # NodeMCU-Home-Automation-Sensor (a.k.a. The Kube)
 
+# IMPORTANT  
+Going forward, the Kube sensor will be using the ESPEasy (https://github.com/letscontrolit/ESPEasy) project as firmware. The work done by the ESPEasy team is great and allows me to leverage all of their supported sensors, focusing on hardware development and not wasting redundant effort on software. 
+
+In order to support the OLED screen in ESPEasy (and avoid having non-standard configuration), it is important to move the D9/D10 pins used in the I2C configuration to D3/D4 (SDA/SCL).
+
+# 
+
 Code for Thingiverse item https://www.thingiverse.com/thing:2539897 (The Kube - a NodeMCU/DHT22 based MQTT temp/humidity sensor with local OLED display)
 
 Note: The parts list I posted on the Thingiverse site (and below) contains affiliate links to Amazon. These are the parts I've used/tested in building my sensors, and if you wish to support my designs, please go ahead and use them to order parts. Thank you and enjoy!
@@ -9,8 +16,8 @@ Note: The parts list I posted on the Thingiverse site (and below) contains affil
 # Parts List
 
   *3D printed enclosure (https://www.thingiverse.com/thing:2539897)  
-  *OLED screen (http://amzn.to/2xR4iQP)  
-  *NodeMCU breakout board (https://goo.gl/U2fY7y)  
+  *OLED screen (http://amzn.to/2xR4iQP) - I2C recommended  
+  *NodeMCU breakout board (https://www.tindie.com/products/11677/)  
   *NodeMCU ESP8266 dev board v0.9 (http://amzn.to/2hd6RJk) or 1.0 (http://amzn.to/2ymAkak).  
   *DHT-22 sensor (http://amzn.to/2ymmODK)  
   *headers (http://amzn.to/2fNe81C)  
@@ -42,14 +49,14 @@ For SPI OLED:
 
 For I2C OLED:
 
-![Diagram](https://github.com/bkpsu/NodeMCU-Home-Automation-Sensor/raw/master/OLED%20I2C%20Hookup.png)
+![](https://github.com/bkpsu/NodeMCU-Home-Automation-Sensor/raw/master/OLED%20I2C%20Hookup.pngg)
 
 | Board | Wire Color | OLED  |  
 |:-------:|:-----:|:-----:|  
 | 3v3 |  Red | VCC|    
 | Gnd |  Black  | Gnd | 
-| D10 | Blue | SCL |
-| D9 | Green | SDA |  
+| D4 | Blue | SCL |
+| D3 | Green | SDA |  
 
 
 Final Assembly:
@@ -61,6 +68,8 @@ Final Assembly:
 3. Put enclosure cover on, and secure with small screws (or glue in place)
 
 [![Hardware Build Video](https://img.youtube.com/vi/fA91LcJRbhI/0.jpg)](https://www.youtube.com/watch?v=fA91LcJRbhI)
+
+**Note** Since the video was posted, I've switched to using pins D3/D4 as SCL/SDA for the I2C OLED screen, instead of D9/D10. Please connect the OLED as per the I2C table above!
 
 # Program sensor
 
@@ -80,6 +89,8 @@ ESP8266mDNS
 ESP8266WiFi by Ivan Grokhotkov (v 1.0.0 or higher)  
 PubSubClient by Nick O'Leary (v 2.6.0 or higher)  
 WiFiManager by tzapu (v 0.12.0 or higher)  
+
+**Note 3** As of 9/3/2018, work on this software project is halted, in favor of using ESPEasy as the firmware. I will leave the project file as-is, in case you don't want to move to ESPEasy, but I recommend using ESPEasy since it's actively developed and supports many more sensors already.
 
 [![Arduino Programming Video](https://img.youtube.com/vi/uDsnqi1Vl4U/0.jpg)](https://img.youtube.com/vi/uDsnqi1Vl4U)
 
