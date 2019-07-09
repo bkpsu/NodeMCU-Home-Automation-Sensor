@@ -234,7 +234,7 @@ void loop() {
         
       }
       else { //add offsets, if any
-        t = t + ((5 / 9) * temp_offset);
+        t = t + ((5.0 / 9.0) * temp_offset);
         f = f + temp_offset;
         h = h + hum_offset;
         h2=h;//Store values encase next read fails
