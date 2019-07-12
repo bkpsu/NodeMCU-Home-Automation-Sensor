@@ -39,7 +39,8 @@ float hum_offset = 14.9;
 
 /**************************************************/
 
-#define DHTPIN 4      // (D2) what digital pin we're connected to
+#define DHTPIN 4      // (D2) what digital pin we're connected to (NodeMCU Breakout Board v1.1 or older)
+//#define DHTPIN 12      // (D6) what digital pin we're connected to (NodeMCU Breakout Board v1.2)
 #define MOTIONPIN 5   // (D1) what digital pin the motion sensor is connected to
 #define PRESSPIN A0    // (A0) what analog pin the pressure sensor is connected to
 
